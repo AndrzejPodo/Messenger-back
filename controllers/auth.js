@@ -1,0 +1,49 @@
+const config = require("../config");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
+const authService = require("../services/auth");
+const userService = require("../services/user");
+
+function login(req, res) {
+  return authService
+    .authenticate(req.body)
+    .then(token => {
+      userService.getUserByLogin(req.body.login || "").then(exists => {
+        res.send({
+          id:exists.id,
+          success: true,
+          data: { token }
+        });
+      });
+      
+    })
+    .catch(err => {
+      res.send({
+        success: false,
+        message: err.message //not the best error handling.
+        //for better error handling visit github repository, link provided below
+      });
+    });
+}
+
+function register(req, res) {
+  var login = req.body.login;
+  return userService.getUserByLogin(req.body.login || "").then(exists => {
+    if (exists) {
+      return res.send({
+        success: false,
+        message: "Registration failed. User with this email already registered."
+      });
+    }
+    var user = {
+      login: req.body.login,
+      password: bcrypt.hashSync(req.body.password, config.saltRounds)
+    };
+    return userService.addUser(user).then(() => res.send({ success: true }));
+  });
+}
+module.exports = {
+  login,
+  register
+};
