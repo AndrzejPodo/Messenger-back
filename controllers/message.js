@@ -1,7 +1,6 @@
 const messagesService = require('../services/messages');
 
 function getMessages(req, res){
-    console.log(req.params.id);
     messagesService.getByConvId(req.params.id).then(
             data => {res.send(data);
         }
