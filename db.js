@@ -1,6 +1,8 @@
 const config = require('./config');
 const Sequelize = require('sequelize');
-var sequelize = new Sequelize(config.dbConnectionString);
+var sequelize = new Sequelize(config.dbConnectionString,{define: {
+    timestamps: false
+  }});
 // require('sequelize-values')(sequelize);
 
 
