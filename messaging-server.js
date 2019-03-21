@@ -2,7 +2,8 @@ const WebSocket = require('ws').Server;
 const jwt = require("jsonwebtoken");
 const config = require('./config');
 const messageController = require('./controllers/message');
-const mesageservice = require('./services/users');
+const convController = require('./controllers/conv');
+const ser = require('./services/conv');
 
 
 var wss = new WebSocket({
@@ -29,6 +30,12 @@ wss.on('connection', (ws, req) => {
     ws.on('message', message => {
         console.log('url: %s', req.url);
         switch(req.url){
+            case '/createConv':
+                convController.createConv(message, ws);
+                break;
+            case '/addUserToConv':
+                convController.addUserToConv(message, ws);
+                break;
             case '/postMessage':
                 messageController.sendMessage(message,ws);
                 break;

@@ -13,6 +13,10 @@ const Conversation = sequelize.define("conversation", {
   name: Sequelize.STRING
 });
 
+Conversation.addUser = function(user) {
+  this.setUsers(user);
+};
+
 const Message = sequelize.define(
   "message",
   {
@@ -30,14 +34,8 @@ const ConvUser = sequelize.define(
   { timestamps: false }
 );
 
-Message.belongsTo(Conversation);
-Message.belongsTo(User);
-
-User.associate = User.belongsToMany(Conversation, {
-  through: 'ConvUsers',
-  foreignKey: "userId"
-});
-// Conversation.belongsToMany(User, {through: "conv_user"});
+User.belongsToMany(Conversation, {through: "ConvUsers"});
+Conversation.belongsToMany(User, {through: "ConvUsers"});
 
 const Order = sequelize.define(
   "order",
@@ -59,7 +57,7 @@ const Order = sequelize.define(
 );
 
 sequelize.sync({
-  force: true,
+  force: false,
   logging: console.log
 });
 
