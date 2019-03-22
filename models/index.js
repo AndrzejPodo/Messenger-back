@@ -20,52 +20,30 @@ Conversation.addUser = function(user) {
 const Message = sequelize.define(
   "message",
   {
-    text: Sequelize.TEXT
+    text: Sequelize.TEXT,
+    userName: Sequelize.STRING
   },
   { timestamps: true }
 );
 
 const ConvUser = sequelize.define(
-  "convuser",
-  {
-    // user_id: Sequelize.INTEGER,
-    // conv_id: Sequelize.INTEGER
-  },
+  "convuser",{},
   { timestamps: false }
 );
 
 User.belongsToMany(Conversation, {through: "ConvUsers"});
 Conversation.belongsToMany(User, {through: "ConvUsers"});
 
-const Order = sequelize.define(
-  "order",
-  {
-    title: Sequelize.STRING,
-    date: {
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW
-    },
-    user_id: {
-      type: Sequelize.INTEGER,
-      references: {
-        model: User,
-        key: "id"
-      }
-    }
-  },
-  { timestamps: false }
-);
+Message.belongsTo(Conversation);
 
 sequelize.sync({
   force: false,
   logging: console.log
 });
 
-User.hasMany(Order, { foreignKey: "user_id" });
 
 module.exports = {
   User,
-  Order,
   Message,
   Conversation,
   ConvUser
