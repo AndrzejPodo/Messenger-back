@@ -1,5 +1,7 @@
 const Conv= require('../models').Conversation;
 const Users = require('../models').User
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const addConv = data => {
     return new Promise(function(resolved, rejected){
@@ -12,8 +14,16 @@ const addConv = data => {
 const addUserToConv = data => {
     return new Promise(function(resolved, rejected){
         Conv.findAll({where:{id: data.conversationId}}).then(conv => {
-            Users.findAll({where: {login: data.userLogin}}).then(user => {
-                conv[0].addUsers(user).then(data => resolved(data)).catch(err => rejected(err));
+            if(!Array.isArray(data.users)) throw new Error("Zjebałeś śmieciu");
+            Users.findAll(
+                {
+                    where: {
+                        login:{ 
+                            [Op.or]: data.users
+                        }
+                    }
+                }).then(user => {
+                    conv[0].addUsers(user).then(data => resolved(data)).catch(err => rejected(err));
             })
         })
     });

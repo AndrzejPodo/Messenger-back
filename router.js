@@ -3,8 +3,6 @@ const authController = require('./controllers/auth');
 
 const convs = require('./httpcontrollers/conversations');
 
-const orderController = require('./controllers/order');
-
 const messageController = require('./httpcontrollers/messages');
 
 const authMidlleware = require('./middlewares/auth');
