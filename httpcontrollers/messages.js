@@ -7,8 +7,8 @@ function sendMessage(req, res){
         getUsers.getConvUsers(req.body.conversationId).then(names => {
             if(Array.isArray(names)){
                 for(var i = 0; i < names.length; i++){
-                    console.log(names[i]);
                     if(wss.clients[names[i]]){
+                        console.log("Test");
                         wss.clients[names[i]].send(JSON.parse("tik xd CHUJKU"));
                     }
                 }

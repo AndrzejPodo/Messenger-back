@@ -39,13 +39,12 @@ var wss = new WebSocket({
 const clients = new Clients();
 
 wss.on('connection', (client) => {
-    console.log(JSON.parse(msg).username);
-    clients.saveClient(JSON.parse(msg).username);
-    // client.on('message', (msg)=>{
-    //     console.log(JSON.parse(msg).username);
-    //     clients.saveClient(JSON.parse(msg).username);
-    // }),
+    client.on('message', (msg)=>{
+        console.log(JSON.parse(msg).username);
+        clients.saveClient(JSON.parse(msg).username, client);
+    }),
     client.on('close', (msg) => {
+        console.log(JSON.parse(msg).username);
         clients.removeClient(JSON.parse(msg).username);
         console.log(clients.clientLits);
     })
