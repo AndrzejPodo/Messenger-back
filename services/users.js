@@ -2,7 +2,7 @@ const Conversation = require("../models").Conversation;
 const User = require("../models").User;
 
 const getConvUsers = c_id => {
-  return Promise(function(resolved, rejected){
+  return new Promise(function(resolved, rejected){
     User.findAll({
       include: [
         {
@@ -13,8 +13,8 @@ const getConvUsers = c_id => {
         }
       ]
     }).then(data => {
-      resolved(data.map(user => user.name))
-    });
+      resolved(data.map(user => user.login))
+    }).catch(err => rejected(err));
   });
 }
 

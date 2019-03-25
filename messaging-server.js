@@ -1,10 +1,21 @@
 const WebSocket = require('ws').Server;
 const jwt = require("jsonwebtoken");
 const config = require('./config');
-const messageController = require('./controllers/message');
-const convController = require('./controllers/conv');
-const ser = require('./services/conv');
 
+class Clients {
+    constructor(){
+        this.clientLits = {};
+        this.saveClient = this.saveClient.bind(this);
+        this.removeClient = this.removeClient.bind(this);
+    }
+    saveClient(username, client){
+        this.clientLits[username] = client;
+    }
+
+    removeClient(username){
+        delete this.clientLits[username];
+    }
+}
 
 var wss = new WebSocket({
     port: 8080,
@@ -25,24 +36,21 @@ var wss = new WebSocket({
     //     }
     // }
 })
+const clients = new Clients();
 
-wss.on('connection', (ws, req) => {
-    ws.on('message', message => {
-        console.log('url: %s', req.url);
-        switch(req.url){
-            case '/createConv':
-                convController.createConv(message, ws);
-                break;
-            case '/addUserToConv':
-                convController.addUserToConv(message, ws);
-                break;
-            case '/postMessage':
-                messageController.sendMessage(message,ws);
-                break;
-            case '/getMessages':
-                messageController.getMessages(message, ws);
-                break;
-            
-        }
-    });
+wss.on('connection', (client) => {
+    console.log(JSON.parse(msg).username);
+    clients.saveClient(JSON.parse(msg).username);
+    // client.on('message', (msg)=>{
+    //     console.log(JSON.parse(msg).username);
+    //     clients.saveClient(JSON.parse(msg).username);
+    // }),
+    client.on('close', (msg) => {
+        clients.removeClient(JSON.parse(msg).username);
+        console.log(clients.clientLits);
+    })
 });
+
+module.exports = {
+    clients
+}
